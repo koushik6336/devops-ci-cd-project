@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = "ashwadama/devops-project"
+        DOCKER_TAG = "v1"
+    }
+
     stages {
 
         stage('Build Maven Project') {
@@ -11,18 +16,35 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t ci-java-app:1.0 .'
+                bat "docker build -t %DOCKER_IMAGE%:%DOCKER_TAG% ."
             }
         }
 
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                bat "docker push %DOCKER_IMAGE%:%DOCKER_TAG%"
+            }
+        }
     }
 
     post {
         success {
-            echo 'Build Successful!'
+            echo 'Build and Push Successful!'
         }
         failure {
-            echo 'Build Failed!'
+            echo 'Build or Push Failed!'
         }
     }
 }

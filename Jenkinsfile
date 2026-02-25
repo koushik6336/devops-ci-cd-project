@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "ashwadama/devops-project"
-        DOCKER_TAG = "v1"
+    DOCKER_IMAGE = "ashwadama/devops-project"
+    DOCKER_TAG = "${BUILD_NUMBER}"
     }
 
     stages {

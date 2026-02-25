@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "ashwadama/devops-project"
         DOCKER_TAG = "${BUILD_NUMBER}"
+        KUBECONFIG_PATH = "C:\\Users\\koush_8bv5nju\\.kube\\config"
     }
 
     stages {
@@ -41,7 +42,8 @@ pipeline {
         stage('Deploy to Dev') {
             steps {
                 bat """
-                kubectl -n dev set image deployment/devops-project-deployment ^
+                kubectl --kubeconfig=%KUBECONFIG_PATH% ^
+                -n dev set image deployment/devops-project-deployment ^
                 devops-project-container=%DOCKER_IMAGE%:%DOCKER_TAG%
                 """
             }
@@ -56,7 +58,8 @@ pipeline {
         stage('Deploy to Prod') {
             steps {
                 bat """
-                kubectl -n prod set image deployment/devops-project-deployment ^
+                kubectl --kubeconfig=%KUBECONFIG_PATH% ^
+                -n prod set image deployment/devops-project-deployment ^
                 devops-project-container=%DOCKER_IMAGE%:%DOCKER_TAG%
                 """
             }

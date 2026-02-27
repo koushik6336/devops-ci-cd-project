@@ -1,20 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ci-java-deployment
+  name: devops-project-deployment
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: ci-java
+      app: devops-project
   template:
     metadata:
       labels:
-        app: ci-java
+        app: devops-project
     spec:
       containers:
-      - name: ci-java-container
-        image: ci-java-app:1.0
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 8080
+        - name: devops-project-container
+          image: ashwadama/devops-project:v1
+          ports:
+            - containerPort: 8080
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ci-java-service
+  name: devops-project-service
+  namespace: prod
 spec:
   type: NodePort
   selector:
-    app: ci-java
+    app: devops-project
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 8080
-      nodePort: 30007
+      nodePort: 30009

@@ -1,114 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CI/CD Pipeline | Java DevOps Project</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
+<title>DevOps CI/CD Pipeline</title>
 
-    body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #ffffff;
-    }
+<style>
 
-    .container {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px);
-      padding: 40px;
-      width: 90%;
-      max-width: 600px;
-      border-radius: 18px;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Segoe UI, sans-serif;
+}
 
-    h1 {
-      font-size: 2.4rem;
-      margin-bottom: 10px;
-    }
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+}
 
-    h1 span {
-      color: #00ffcc;
-    }
+.container{
+width:650px;
+padding:40px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+border-radius:18px;
+text-align:center;
+box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
 
-    p {
-      font-size: 1.05rem;
-      margin: 15px 0 30px;
-      opacity: 0.9;
-    }
+h1{
+font-size:40px;
+margin-bottom:15px;
+color:#00ffcc;
+}
 
-    .status {
-      background: #00ffcc;
-      color: #000;
-      padding: 14px;
-      border-radius: 10px;
-      font-weight: 600;
-      margin-bottom: 30px;
-    }
+.status{
+background:#00ffcc;
+color:black;
+padding:12px;
+border-radius:8px;
+font-weight:bold;
+margin:20px 0;
+}
 
-    .tools {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 30px;
-    }
+.section{
+margin-top:25px;
+padding:15px;
+background:rgba(255,255,255,0.15);
+border-radius:10px;
+}
 
-    .tool {
-      flex: 1 1 45%;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 500;
-    }
+.tools{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:15px;
+}
 
-    footer {
-      font-size: 0.9rem;
-      opacity: 0.75;
-    }
+.tool{
+background:rgba(255,255,255,0.2);
+padding:10px;
+border-radius:8px;
+}
 
-    footer span {
-      color: #00ffcc;
-    }
-  </style>
+.version{
+margin-top:20px;
+color:#ffd700;
+font-weight:bold;
+}
+
+footer{
+margin-top:25px;
+font-size:14px;
+opacity:0.8;
+}
+
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>🚀 <span>CI/CD Pipeline</span></h1>
 
-    <p>
-      This Java application is built to demonstrate real-world
-      <strong>DevOps CI/CD practices</strong> using industry-standard tools.
-    </p>
+<div class="container">
 
-    <div class="status">
-      ✅ Build Status: SUCCESS
-    </div>
+<h1>🚀 DevOps CI/CD Pipeline</h1>
 
-    <div class="tools">
-      <div class="tool">☕ Java 17</div>
-      <div class="tool">🧱 Maven</div>
-      <div class="tool">🔁 Jenkins</div>
-      <div class="tool">🐳 Docker</div>
-      <div class="tool">☸ Kubernetes</div>
-      <div class="tool">📊 Prometheus & Grafana</div>
-    </div>
+<p>
+This application demonstrates a complete <b>DevOps CI/CD pipeline</b>
+with containerized deployment and Kubernetes orchestration.
+</p>
 
-    <footer>
-      Built by <span>DevOps Engineer</span> • CI/CD Automation Project
-    </footer>
-  </div>
+<div class="status">
+✅ Pipeline Deployment Successful
+</div>
+
+<div class="section">
+
+<h3>🔧 Technologies Used</h3>
+
+<div class="tools">
+<div class="tool">☕ Java 17</div>
+<div class="tool">🧱 Maven</div>
+<div class="tool">🔁 Jenkins</div>
+<div class="tool">🐳 Docker</div>
+<div class="tool">☸ Kubernetes</div>
+<div class="tool">📊 Prometheus & Grafana</div>
+</div>
+
+</div>
+
+<div class="section version">
+
+Environment: Kubernetes Dev<br>
+Version: v2 Pipeline Test<br>
+Deployment Date: March 10 2026
+
+</div>
+
+<footer>
+CI/CD Automation Project • DevOps Practice Environment
+</footer>
+
+</div>
+
 </body>
 </html>

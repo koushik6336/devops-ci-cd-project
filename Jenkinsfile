@@ -1,17 +1,35 @@
 pipeline {
     agent any
 
+    options {
+        timestamps()
+        timeout(time: 30, unit: 'MINUTES')
+    }
+
     environment {
-        DOCKER_IMAGE = "ashwadama/devops-project"
-        DOCKER_TAG = "${BUILD_NUMBER}"
+        DOCKER_IMAGE    = "ashwadama/devops-project"
+        DOCKER_TAG      = "${BUILD_NUMBER}"
         KUBECONFIG_PATH = "C:\\Users\\koush_8bv5nju\\.kube\\config"
+        DEPLOYMENT      = "devops-project-deployment"
+        CONTAINER       = "devops-project-container"
     }
 
     stages {
 
-        stage('Build Maven Project') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build and Test') {
             steps {
                 bat 'mvn clean package'
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
+                }
             }
         }
 
@@ -28,7 +46,7 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
+                    bat 'echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin'
                 }
             }
         }
@@ -41,37 +59,57 @@ pipeline {
 
         stage('Deploy to Dev') {
             steps {
-                bat """
-                kubectl --kubeconfig=%KUBECONFIG_PATH% ^
-                -n dev set image deployment/devops-project-deployment ^
-                devops-project-container=%DOCKER_IMAGE%:%DOCKER_TAG%
-                """
+                script {
+                    try {
+                        bat "kubectl --kubeconfig=%KUBECONFIG_PATH% -n dev set image deployment/%DEPLOYMENT% %CONTAINER%=%DOCKER_IMAGE%:%DOCKER_TAG%"
+                        bat "kubectl --kubeconfig=%KUBECONFIG_PATH% -n dev rollout status deployment/%DEPLOYMENT% --timeout=180s"
+                    } catch (err) {
+                        bat "kubectl --kubeconfig=%KUBECONFIG_PATH% -n dev rollout undo deployment/%DEPLOYMENT%"
+                        error "Dev deployment failed and was rolled back: ${err}"
+                    }
+                }
+            }
+        }
+
+        stage('Verify Dev') {
+            steps {
+                bat "kubectl --kubeconfig=%KUBECONFIG_PATH% -n dev get pods -l app=devops-project"
+                bat "kubectl --kubeconfig=%KUBECONFIG_PATH% -n dev get deployment %DEPLOYMENT% -o jsonpath=\"{.spec.template.spec.containers[0].image}\""
             }
         }
 
         stage('Approve Production Deployment') {
             steps {
-                input message: 'Deploy to Production?', ok: 'Approve'
+                timeout(time: 10, unit: 'MINUTES') {
+                    input message: 'Dev is healthy. Deploy to Production?', ok: 'Approve'
+                }
             }
         }
 
         stage('Deploy to Prod') {
             steps {
-                bat """
-                kubectl --kubeconfig=%KUBECONFIG_PATH% ^
-                -n prod set image deployment/devops-project-deployment ^
-                devops-project-container=%DOCKER_IMAGE%:%DOCKER_TAG%
-                """
+                script {
+                    try {
+                        bat "kubectl --kubeconfig=%KUBECONFIG_PATH% -n prod set image deployment/%DEPLOYMENT% %CONTAINER%=%DOCKER_IMAGE%:%DOCKER_TAG%"
+                        bat "kubectl --kubeconfig=%KUBECONFIG_PATH% -n prod rollout status deployment/%DEPLOYMENT% --timeout=180s"
+                    } catch (err) {
+                        bat "kubectl --kubeconfig=%KUBECONFIG_PATH% -n prod rollout undo deployment/%DEPLOYMENT%"
+                        error "Prod deployment failed and was rolled back: ${err}"
+                    }
+                }
             }
         }
     }
 
     post {
+        always {
+            bat 'docker logout'
+        }
         success {
-            echo 'Build, Dev Deployment and Prod Deployment Successful!'
+            echo 'Build, Test, Dev and Prod deployment successful!'
         }
         failure {
-            echo 'Pipeline Failed!'
+            echo 'Pipeline failed. Check the stage that turned red.'
         }
     }
 }
